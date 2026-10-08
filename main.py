@@ -8,6 +8,15 @@ menu = {
 }
 
 
+def load_tasks():
+    with open("tasks.txt", "r") as file:
+        return [task.strip() for task in file.readlines()]
+
+def save_tasks(tasks):
+    with open("tasks.txt", "w") as file:
+        for task in tasks:
+            file.write(task + "\n")
+
 def todo_list(tasks):
     while True:
         print("\n--- To-Do List ---")
@@ -21,6 +30,7 @@ def todo_list(tasks):
             if choice == 1:
                 task = input("Enter the task: ")
                 tasks.append(task)
+                save_tasks(tasks)
                 print("Task added successfully.")
 
             elif choice == 2:
@@ -43,6 +53,7 @@ def todo_list(tasks):
 
                     if 1 <= task_number <= len(tasks):
                         removed_task = tasks.pop(task_number - 1)
+                        save_tasks(tasks)
                         print(f'Task "{removed_task}" removed successfully.')
                     else:
                         print("Invalid task number.")
@@ -57,5 +68,5 @@ def todo_list(tasks):
         except ValueError:
             print("Please enter a valid number.")
 
-
+tasks = load_tasks()
 todo_list(tasks)
