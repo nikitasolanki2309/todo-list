@@ -3,7 +3,8 @@ menu = {
     2: "View tasks",
     3: "Remove task",
     4: "Mark task as completed",
-    5: "Exit"
+    5: "Mark task as pending",
+    6: "Exit"
 }
 
 
@@ -14,12 +15,15 @@ def load_tasks():
         with open("tasks.txt", "r") as file:
             for line in file.readlines():
                 line = line.strip()
+
                 if not line:
                     continue
+
                 if "|" in line:
-                    task, status = line.rsplit("|", 1)
+                    task_name, status = line.rsplit("|", 1)
+
                     tasks.append({
-                        "task": task,
+                        "task": task_name,
                         "completed": status == "completed"
                     })
                 else:
@@ -27,18 +31,20 @@ def load_tasks():
                         "task": line,
                         "completed": False
                     })
+
     except FileNotFoundError:
-            pass
+        pass
+
     return tasks
+
 
 def save_tasks(tasks):
     with open("tasks.txt", "w") as file:
         for task in tasks:
-            if task["completed"]:
-                status = "completed"
-            else:
-                status = "pending"
+            status = "completed" if task["completed"] else "pending"
+
             file.write(f'{task["task"]}|{status}\n')
+
 
 def view_tasks(tasks):
     if not tasks:
@@ -47,11 +53,10 @@ def view_tasks(tasks):
         print("\nYour Tasks:")
 
         for i, task in enumerate(tasks, start=1):
-            if task["completed"]:
-                status = "Completed"
-            else:
-                status = "Pending"
+            status = "Completed" if task["completed"] else "Pending"
+
             print(f'{i}. {task["task"]} [{status}]')
+
 
 def todo_list(tasks):
     while True:
@@ -65,6 +70,7 @@ def todo_list(tasks):
 
             if choice == 1:
                 task_name = input("Enter the task: ").strip()
+
                 if not task_name:
                     print("Task cannot be empty.")
                 else:
@@ -72,8 +78,9 @@ def todo_list(tasks):
                         "task": task_name,
                         "completed": False
                     })
-                save_tasks(tasks)
-                print("Task added successfully.")
+
+                    save_tasks(tasks)
+                    print("Task added successfully.")
 
             elif choice == 2:
                 view_tasks(tasks)
@@ -84,12 +91,18 @@ def todo_list(tasks):
                 else:
                     view_tasks(tasks)
 
-                    task_number = int(input("Enter the task number you want to delete: "))
+                    task_number = int(
+                        input("Enter the task number you want to delete: ")
+                    )
 
                     if 1 <= task_number <= len(tasks):
                         removed_task = tasks.pop(task_number - 1)
                         save_tasks(tasks)
-                        print(f'Task "{removed_task["task"]}" removed successfully.')
+
+                        print(
+                            f'Task "{removed_task["task"]}" '
+                            "removed successfully."
+                        )
                     else:
                         print("Invalid task number.")
 
@@ -98,9 +111,14 @@ def todo_list(tasks):
                     print("The task list is empty.")
                 else:
                     view_tasks(tasks)
-                    task_number = int( input("Enter the task number to mark as completed: ") )
+
+                    task_number = int(
+                        input("Enter the task number to mark as completed: ")
+                    )
+
                     if 1 <= task_number <= len(tasks):
                         task = tasks[task_number - 1]
+
                         if task["completed"]:
                             print("This task is already completed.")
                         else:
@@ -111,6 +129,28 @@ def todo_list(tasks):
                         print("Invalid task number.")
 
             elif choice == 5:
+                if not tasks:
+                    print("The task list is empty.")
+                else:
+                    view_tasks(tasks)
+
+                    task_number = int(
+                        input("Enter the task number to mark as pending: ")
+                    )
+
+                    if 1 <= task_number <= len(tasks):
+                        task = tasks[task_number - 1]
+
+                        if not task["completed"]:
+                            print("This task is already pending.")
+                        else:
+                            task["completed"] = False
+                            save_tasks(tasks)
+                            print("Task marked as pending.")
+                    else:
+                        print("Invalid task number.")
+
+            elif choice == 6:
                 print("Goodbye!")
                 break
 
@@ -119,6 +159,7 @@ def todo_list(tasks):
 
         except ValueError:
             print("Please enter a valid number.")
+
 
 tasks = load_tasks()
 todo_list(tasks)

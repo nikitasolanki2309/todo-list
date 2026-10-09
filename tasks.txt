@@ -1,4 +1,5 @@
 Practice python|completed
 Eat Apple|pending
 Learn Git|pending
-Github time|completed
+Github time|pending
+Sleep|completed
