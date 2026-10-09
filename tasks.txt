@@ -3,3 +3,4 @@ Eat Apple|pending|Medium
 Learn Git|completed|Medium
 Github time|pending|Medium
 Play HD|pending|Low
+Make a python project|pending|High

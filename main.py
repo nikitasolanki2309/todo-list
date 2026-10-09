@@ -4,7 +4,8 @@ menu = {
     3: "Remove task",
     4: "Mark task as completed",
     5: "Mark task as pending",
-    6: "Exit"
+    6: "Search tasks",
+    7: "Exit"
 }
 
 
@@ -66,6 +67,37 @@ def view_tasks(tasks):
                 f'{i}. {task["task"]} '
                 f'[{status}] [{task["priority"]}]'
             )
+
+
+def search_tasks(tasks):
+    if not tasks:
+        print("The task list is empty.")
+        return
+
+    search_name = input("Enter task name to search: ").strip().lower()
+
+    if not search_name:
+        print("Search name cannot be empty.")
+        return
+
+    found_tasks = []
+
+    for i, task in enumerate(tasks, start=1):
+        if search_name in task["task"].lower():
+            found_tasks.append((i, task))
+
+    if found_tasks:
+        print("\nSearch Results:")
+
+        for i, task in found_tasks:
+            status = "Completed" if task["completed"] else "Pending"
+
+            print(
+                f'{i}. {task["task"]} '
+                f'[{status}] [{task["priority"]}]'
+            )
+    else:
+        print("No matching tasks found.")
 
 
 def todo_list(tasks):
@@ -182,6 +214,9 @@ def todo_list(tasks):
                         print("Invalid task number.")
 
             elif choice == 6:
+                search_tasks(tasks)
+
+            elif choice == 7:
                 print("Goodbye!")
                 break
 
