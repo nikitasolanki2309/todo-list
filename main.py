@@ -5,7 +5,8 @@ menu = {
     4: "Mark task as completed",
     5: "Mark task as pending",
     6: "Search tasks",
-    7: "Exit"
+    7: "Filter tasks",
+    8: "Exit"
 }
 
 
@@ -57,16 +58,17 @@ def save_tasks(tasks):
 def view_tasks(tasks):
     if not tasks:
         print("The task list is empty.")
-    else:
-        print("\nYour Tasks:")
+        return
 
-        for i, task in enumerate(tasks, start=1):
-            status = "Completed" if task["completed"] else "Pending"
+    print("\nYour Tasks:")
 
-            print(
-                f'{i}. {task["task"]} '
-                f'[{status}] [{task["priority"]}]'
-            )
+    for i, task in enumerate(tasks, start=1):
+        status = "Completed" if task["completed"] else "Pending"
+
+        print(
+            f'{i}. {task["task"]} '
+            f'[{status}] [{task["priority"]}]'
+        )
 
 
 def search_tasks(tasks):
@@ -98,6 +100,68 @@ def search_tasks(tasks):
             )
     else:
         print("No matching tasks found.")
+
+
+def filter_tasks(tasks):
+    filter_menu = {
+        1: "Show pending tasks",
+        2: "Show completed tasks",
+        3: "Show high-priority tasks",
+        4: "Show medium-priority tasks",
+        5: "Show low-priority tasks",
+        6: "Back to main menu"
+    }
+
+    while True:
+        print("\n--- Filter Tasks ---")
+
+        for number, option in filter_menu.items():
+            print(f"{number}. {option}")
+
+        try:
+            choice = int(input("Enter your choice: "))
+
+            if choice == 6:
+                break
+
+            elif choice == 1:
+                filtered = [
+                    task for task in tasks
+                    if not task["completed"]
+                ]
+
+            elif choice == 2:
+                filtered = [
+                    task for task in tasks
+                    if task["completed"]
+                ]
+
+            elif choice == 3:
+                filtered = [
+                    task for task in tasks
+                    if task["priority"] == "High"
+                ]
+
+            elif choice == 4:
+                filtered = [
+                    task for task in tasks
+                    if task["priority"] == "Medium"
+                ]
+
+            elif choice == 5:
+                filtered = [
+                    task for task in tasks
+                    if task["priority"] == "Low"
+                ]
+
+            else:
+                print("Invalid choice.")
+                continue
+
+            view_tasks(filtered)
+
+        except ValueError:
+            print("Please enter a valid number.")
 
 
 def todo_list(tasks):
@@ -151,72 +215,78 @@ def todo_list(tasks):
             elif choice == 3:
                 if not tasks:
                     print("The task list is empty.")
-                else:
-                    view_tasks(tasks)
+                    continue
 
-                    task_number = int(
-                        input("Enter the task number you want to delete: ")
+                view_tasks(tasks)
+
+                task_number = int(
+                    input("Enter the task number you want to delete: ")
+                )
+
+                if 1 <= task_number <= len(tasks):
+                    removed_task = tasks.pop(task_number - 1)
+                    save_tasks(tasks)
+
+                    print(
+                        f'Task "{removed_task["task"]}" '
+                        "removed successfully."
                     )
-
-                    if 1 <= task_number <= len(tasks):
-                        removed_task = tasks.pop(task_number - 1)
-                        save_tasks(tasks)
-
-                        print(
-                            f'Task "{removed_task["task"]}" '
-                            "removed successfully."
-                        )
-                    else:
-                        print("Invalid task number.")
+                else:
+                    print("Invalid task number.")
 
             elif choice == 4:
                 if not tasks:
                     print("The task list is empty.")
-                else:
-                    view_tasks(tasks)
+                    continue
 
-                    task_number = int(
-                        input("Enter the task number to mark as completed: ")
-                    )
+                view_tasks(tasks)
 
-                    if 1 <= task_number <= len(tasks):
-                        task = tasks[task_number - 1]
+                task_number = int(
+                    input("Enter the task number to mark as completed: ")
+                )
 
-                        if task["completed"]:
-                            print("This task is already completed.")
-                        else:
-                            task["completed"] = True
-                            save_tasks(tasks)
-                            print("Task marked as completed.")
+                if 1 <= task_number <= len(tasks):
+                    task = tasks[task_number - 1]
+
+                    if task["completed"]:
+                        print("This task is already completed.")
                     else:
-                        print("Invalid task number.")
+                        task["completed"] = True
+                        save_tasks(tasks)
+                        print("Task marked as completed.")
+                else:
+                    print("Invalid task number.")
 
             elif choice == 5:
                 if not tasks:
                     print("The task list is empty.")
-                else:
-                    view_tasks(tasks)
+                    continue
 
-                    task_number = int(
-                        input("Enter the task number to mark as pending: ")
-                    )
+                view_tasks(tasks)
 
-                    if 1 <= task_number <= len(tasks):
-                        task = tasks[task_number - 1]
+                task_number = int(
+                    input("Enter the task number to mark as pending: ")
+                )
 
-                        if not task["completed"]:
-                            print("This task is already pending.")
-                        else:
-                            task["completed"] = False
-                            save_tasks(tasks)
-                            print("Task marked as pending.")
+                if 1 <= task_number <= len(tasks):
+                    task = tasks[task_number - 1]
+
+                    if not task["completed"]:
+                        print("This task is already pending.")
                     else:
-                        print("Invalid task number.")
+                        task["completed"] = False
+                        save_tasks(tasks)
+                        print("Task marked as pending.")
+                else:
+                    print("Invalid task number.")
 
             elif choice == 6:
                 search_tasks(tasks)
 
             elif choice == 7:
+                filter_tasks(tasks)
+
+            elif choice == 8:
                 print("Goodbye!")
                 break
 
