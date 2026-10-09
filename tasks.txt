@@ -1,4 +1,4 @@
-Practice python
-Eat Apple
-Learn Git
-Github time
+Practice python|completed
+Eat Apple|pending
+Learn Git|pending
+Github time|completed
