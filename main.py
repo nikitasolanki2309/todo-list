@@ -19,18 +19,23 @@ def load_tasks():
                 if not line:
                     continue
 
-                if "|" in line:
-                    task_name, status = line.rsplit("|", 1)
+                parts = line.rsplit("|", 2)
 
-                    tasks.append({
-                        "task": task_name,
-                        "completed": status == "completed"
-                    })
+                if len(parts) == 3:
+                    task_name, status, priority = parts
+                elif len(parts) == 2:
+                    task_name, status = parts
+                    priority = "Medium"
                 else:
-                    tasks.append({
-                        "task": line,
-                        "completed": False
-                    })
+                    task_name = parts[0]
+                    status = "pending"
+                    priority = "Medium"
+
+                tasks.append({
+                    "task": task_name,
+                    "completed": status == "completed",
+                    "priority": priority
+                })
 
     except FileNotFoundError:
         pass
@@ -43,7 +48,9 @@ def save_tasks(tasks):
         for task in tasks:
             status = "completed" if task["completed"] else "pending"
 
-            file.write(f'{task["task"]}|{status}\n')
+            file.write(
+                f'{task["task"]}|{status}|{task["priority"]}\n'
+            )
 
 
 def view_tasks(tasks):
@@ -55,7 +62,10 @@ def view_tasks(tasks):
         for i, task in enumerate(tasks, start=1):
             status = "Completed" if task["completed"] else "Pending"
 
-            print(f'{i}. {task["task"]} [{status}]')
+            print(
+                f'{i}. {task["task"]} '
+                f'[{status}] [{task["priority"]}]'
+            )
 
 
 def todo_list(tasks):
@@ -73,14 +83,35 @@ def todo_list(tasks):
 
                 if not task_name:
                     print("Task cannot be empty.")
-                else:
-                    tasks.append({
-                        "task": task_name,
-                        "completed": False
-                    })
+                    continue
 
-                    save_tasks(tasks)
-                    print("Task added successfully.")
+                print("\nSelect Priority:")
+                print("1. High")
+                print("2. Medium")
+                print("3. Low")
+
+                priority_choice = int(
+                    input("Enter priority choice: ")
+                )
+
+                priorities = {
+                    1: "High",
+                    2: "Medium",
+                    3: "Low"
+                }
+
+                if priority_choice not in priorities:
+                    print("Invalid priority choice.")
+                    continue
+
+                tasks.append({
+                    "task": task_name,
+                    "completed": False,
+                    "priority": priorities[priority_choice]
+                })
+
+                save_tasks(tasks)
+                print("Task added successfully.")
 
             elif choice == 2:
                 view_tasks(tasks)

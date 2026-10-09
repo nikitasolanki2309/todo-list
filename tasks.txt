@@ -1,5 +1,5 @@
-Practice python|completed
-Eat Apple|pending
-Learn Git|pending
-Github time|pending
-Sleep|completed
+Practice python|completed|Medium
+Eat Apple|pending|Medium
+Learn Git|completed|Medium
+Github time|pending|Medium
+Play HD|pending|Low
